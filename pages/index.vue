@@ -17,9 +17,9 @@ const isLoading = ref(false);
 watch(
   () => status.value,
   () => {
-    isLoading.value =  ['submitted', 'streaming'].includes(status.value)
-  }
-)
+    isLoading.value = ['submitted', 'streaming'].includes(status.value);
+  },
+);
 
 const createUserMessage = (message: string): Message => {
   return {
@@ -40,11 +40,7 @@ const onSubmit = (inputMessage: string) => {
 <template>
   <div class="flex flex-col h-screen bg-gray-50">
     <ChatHeader />
-    <div class="flex-1 relative">
-      <div class="absolute inset-x-0 top-16 bottom-32">
-        <ChatMessageList :messages="messages" />
-      </div>
-    </div>
+    <ChatMessageList class="flex-1" :messages="messages" />
     <ChatInputBox
       :is-submitting="isLoading"
       @submit="onSubmit"

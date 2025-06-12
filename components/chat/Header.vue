@@ -1,15 +1,13 @@
 <template>
-  <header class="bg-white border-b border-gray-200 py-3 px-4 fixed top-0 left-0 right-0 z-10">
-    <div class="max-w-4xl mx-auto flex items-center justify-between">
-      <!-- 左侧Logo和标题 -->
+  <header class="bg-white border-b border-gray-200 py-3 px-4">
+    <div class="max-w-[800px] mx-auto flex items-center justify-between">
       <div class="flex items-center space-x-3">
-        <div class="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center text-white font-bold">
-          C
-        </div>
-        <h1 class="text-lg font-medium">Claude</h1>
+        <h1 class="text-lg font-medium">
+          <span style="color: #FF8800; font-weight: bold; margin-right: 2px">Re</span>
+          <span>Fine</span>
+        </h1>
       </div>
-      
-      <!-- 右侧按钮 -->
+
       <div class="flex items-center space-x-4">
         <button class="text-gray-500 hover:text-gray-700">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
