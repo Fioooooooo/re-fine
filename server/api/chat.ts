@@ -13,6 +13,7 @@ export default defineLazyEventHandler(async () => {
 
     return defineEventHandler(async (event: any) => {
         const { messages } = await readBody(event);
+        console.log(JSON.stringify(messages));
 
         const result = streamText({
             model: openai('qwen-turbo'),

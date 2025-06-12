@@ -1,0 +1,31 @@
+<template>
+  <header class="bg-white border-b border-gray-200 py-3 px-4 fixed top-0 left-0 right-0 z-10">
+    <div class="max-w-4xl mx-auto flex items-center justify-between">
+      <!-- 左侧Logo和标题 -->
+      <div class="flex items-center space-x-3">
+        <div class="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center text-white font-bold">
+          C
+        </div>
+        <h1 class="text-lg font-medium">Claude</h1>
+      </div>
+      
+      <!-- 右侧按钮 -->
+      <div class="flex items-center space-x-4">
+        <button class="text-gray-500 hover:text-gray-700">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
+          </svg>
+        </button>
+        <button class="text-gray-500 hover:text-gray-700">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+</template>
+
+<script setup lang="ts">
+// 可以在这里添加任何需要的逻辑
+</script>
