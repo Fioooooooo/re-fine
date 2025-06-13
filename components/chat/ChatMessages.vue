@@ -37,10 +37,6 @@ watch(
     <div
       v-for="(message, mIdx) in messages"
       :key="message.id ? message.id : mIdx"
-      class="flex justify-start items-start"
-      :class="{
-        'my-2': message.role === 'user',
-      }"
     >
       <UserMessage v-if="message.role === 'user'" :message="message" />
       <AiMessage v-else :message="message" />

@@ -8,7 +8,7 @@ const props = defineProps<{
 
 <template>
   <div
-    class="p-2 rounded-lg max-w-[80%]"
+    class="p-2 rounded-lg max-w-full"
     :class="{
       'bg-blue-50': message.role === 'user',
     }"
@@ -21,8 +21,8 @@ const props = defineProps<{
         v-if="part.type === 'tool-invocation'"
         class="bg-gray-100 p-2 rounded text-sm font-mono mb-2"
       >
-        <input type="checkbox" :id="`tool-${pIdx}`" class="tool-toggle hidden" />
-        <label :for="`tool-${pIdx}`" class="flex items-center cursor-pointer">
+        <input type="checkbox" :id="`tool-${part.toolInvocation.toolCallId}`" class="tool-toggle hidden" />
+        <label :for="`tool-${part.toolInvocation.toolCallId}`" class="flex items-center cursor-pointer">
           <UIcon name="i-lucide-activity" class="size-4 mr-2" />
           <span>工具调用</span>
           <span class="ml-2 font-bold">{{ part?.toolInvocation?.toolName }}</span>
