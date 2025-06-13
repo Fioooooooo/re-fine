@@ -35,21 +35,21 @@ const autoResize = (e: Event) => {
 </script>
 
 <template>
-  <div class="border-t border-gray-200 bg-white py-3 px-4">
-    <div class="max-w-[800px] mx-auto">
+  <div class="w-full">
+    <div class="mb-2 bg-white py-3 px-4 rounded-lg shadow">
       <form @submit.prevent="handleSubmit" class="relative">
         <textarea
           v-model="inputValue"
           placeholder="有什么任务需要我来执行的？"
           class="w-full border border-gray-300 rounded-lg py-3 pl-4 pr-12 focus:outline-none resize-none min-h-[50px] max-h-[150px] overflow-y-auto"
           :disabled="isSubmitting"
-          rows="1"
+          rows="3"
           @keydown.enter.prevent="!isSubmitting && inputValue.trim() && handleSubmit()"
           @input="autoResize"
         ></textarea>
         <button
           type="submit"
-          class="absolute right-2 top-1/2 transform -translate-y-1/2 text-purple-600 hover:text-purple-800 disabled:text-gray-400"
+          class="absolute right-2 bottom-2 transform -translate-y-1/2 text-purple-600 hover:text-purple-800 disabled:text-gray-400"
           :disabled="!inputValue.trim() || isSubmitting"
         >
           <svg
@@ -68,9 +68,9 @@ const autoResize = (e: Event) => {
           </svg>
         </button>
       </form>
-      <div class="mt-2 text-xs text-gray-500 flex justify-end">
-        <div>由 CI 提供支持</div>
-      </div>
     </div>
+<!--    <div class="my-2 text-xs text-gray-500 flex justify-end">-->
+<!--      <div>由 CI 提供支持</div>-->
+<!--    </div>-->
   </div>
 </template>

@@ -1,6 +1,6 @@
 <template>
-  <header class="bg-white border-b border-gray-200 py-3 px-4">
-    <div class="max-w-[800px] mx-auto flex items-center justify-between">
+  <header class="bg-white py-3 px-2">
+    <div class="flex items-center justify-between">
       <div class="flex items-center space-x-3">
         <h1 class="text-lg font-medium">
           <span style="color: #FF8800; font-weight: bold; margin-right: 2px">Re</span>

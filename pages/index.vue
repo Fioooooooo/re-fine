@@ -5,8 +5,8 @@ import { generateId } from 'ai';
 import type { Message } from 'ai';
 
 import ChatHeader from '~/components/chat/Header.vue';
-import ChatMessageList from '~/components/chat/MessageList.vue';
-import ChatInputBox from '~/components/chat/InputBox.vue';
+import ChatMessages from '~/components/chat/ChatMessages.vue';
+import ChatInput from '~/components/chat/ChatInput.vue';
 
 const { messages, status, append } = useChat({
   maxSteps: 20,
@@ -38,10 +38,10 @@ const onSubmit = (inputMessage: string) => {
 </script>
 
 <template>
-  <div class="flex flex-col h-screen bg-gray-50">
+  <div class="flex flex-col h-screen w-[800px] mx-auto">
     <ChatHeader />
-    <ChatMessageList class="flex-1" :messages="messages" />
-    <ChatInputBox
+    <ChatMessages class="flex-1" :messages="messages" />
+    <ChatInput
       :is-submitting="isLoading"
       @submit="onSubmit"
     />
@@ -50,8 +50,9 @@ const onSubmit = (inputMessage: string) => {
 
 <style>
 html, body {
-  height: 100vh;
+  height: 100%;
   margin: 0;
   padding: 0;
+  font-size: 14px;
 }
 </style>

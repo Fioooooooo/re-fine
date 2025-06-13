@@ -29,19 +29,24 @@ watch(
 
 <template>
   <div
-    class="max-h-full overflow-y-auto py-4 max-w-[800px] w-[800px] mx-auto space-y-2"
+    class="max-h-full overflow-y-auto py-4 space-y-2"
     ref="messagesContainer"
   >
     <div
       v-for="(message, mIdx) in messages"
       :key="message.id ? message.id : mIdx"
-      class="flex justify-start"
+      class="flex justify-start items-start"
+      :class="{
+        'my-2': message.role === 'user',
+      }"
     >
+      <div v-if="message.role === 'user'" class="mx-2">
+        <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-xs">ME</div>
+      </div>
       <div
-        class="p-4 rounded-lg max-w-[80%]"
+        class="p-2 rounded-lg max-w-[80%]"
         :class="{
           'bg-blue-50': message.role === 'user',
-          'bg-white border border-gray-200': message.role !== 'user',
         }"
       >
         <!-- 消息列表 -->
@@ -51,9 +56,9 @@ watch(
           </div>
           <div
             v-if="part.type === 'tool-invocation'"
-            class="bg-gray-100 p-2 rounded text-sm font-mono mt-2"
+            class="bg-gray-100 p-2 rounded text-sm font-mono mb-2"
           >
-            {{ part.toolInvocation }}
+            Execute: {{ part?.toolInvocation?.toolName }}
           </div>
         </div>
       </div>
