@@ -16,7 +16,11 @@ export default defineNuxtConfig({
 
   css: ['~/assets/css/main.css'],
 
-  modules: [],
+  modules: ['@nuxt/ui'],
+
+  ui: {
+    fonts: false
+  },
 
   vite: {
     plugins: [

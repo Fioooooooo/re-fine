@@ -36,7 +36,7 @@ const autoResize = (e: Event) => {
 
 <template>
   <div class="w-full">
-    <div class="mb-2 bg-white py-3 px-4 rounded-lg shadow">
+    <div class="mb-4 bg-white py-3 px-4 rounded-lg shadow">
       <form @submit.prevent="handleSubmit" class="relative">
         <textarea
           v-model="inputValue"

@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref, watch, nextTick } from 'vue';
 import type { UIMessage } from 'ai';
+import UserMessage from './UserMessage.vue';
+import AiMessage from './AiMessage.vue';
 
 const props = defineProps({
   messages: {
@@ -40,28 +42,8 @@ watch(
         'my-2': message.role === 'user',
       }"
     >
-      <div v-if="message.role === 'user'" class="mx-2">
-        <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-xs">ME</div>
-      </div>
-      <div
-        class="p-2 rounded-lg max-w-[80%]"
-        :class="{
-          'bg-blue-50': message.role === 'user',
-        }"
-      >
-        <!-- 消息列表 -->
-        <div v-for="(part, pIdx) in message.parts" :key="pIdx">
-          <div v-if="part.type === 'text'" class="prose prose-sm max-w-none">
-            {{ part.text }}
-          </div>
-          <div
-            v-if="part.type === 'tool-invocation'"
-            class="bg-gray-100 p-2 rounded text-sm font-mono mb-2"
-          >
-            Execute: {{ part?.toolInvocation?.toolName }}
-          </div>
-        </div>
-      </div>
+      <UserMessage v-if="message.role === 'user'" :message="message" />
+      <AiMessage v-else :message="message" />
     </div>
   </div>
 </template>
