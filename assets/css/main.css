@@ -1,2 +1,23 @@
-@import "tailwindcss";
-@import "@nuxt/ui";
+@import 'tailwindcss';
+@import '@nuxt/ui';
+
+/* 自定义滚动条样式 */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}

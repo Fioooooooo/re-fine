@@ -1,39 +1,25 @@
 import { tool as createTool } from 'ai';
 import { z } from 'zod';
+import { Sandbox } from '@e2b/code-interpreter';
 
-const getWeatherTool = createTool({
-  description: 'Get the weather in a location (fahrenheit)',
+const runCodeTool = createTool({
+  description: 'Execute python code in a Jupyter notebook cell and return result.',
   parameters: z.object({
-    location: z
-      .string()
-      .describe('The location to get the weather for'),
+    code: z.string()
+      .describe('The code to run'),
   }),
-  execute: async ({ location }) => {
-    const temperature = Math.round(Math.random() * (90 - 32) + 32);
+  execute: async ({ code }) => {
+    const sbx = await Sandbox.create();
+    const { logs, error, results } = await sbx.runCode(code);
     return {
-      location,
-      temperature,
-    };
-  },
-});
-
-
-const celsiusConverterTool = createTool({
-  description: 'Convert a temperature in fahrenheit to celsius',
-  parameters: z.object({
-    temperature: z
-      .number()
-      .describe('The temperature in fahrenheit to convert'),
-  }),
-  execute: async ({ temperature }) => {
-    const celsius = Math.round((temperature - 32) * (5 / 9));
-    return {
-      celsius,
-    };
+      stdout: logs.stdout,
+      stderr: logs.stderr,
+      runtimeError: error,
+      cellResults: results
+    }
   },
 });
 
 export const chatTools = {
-  getWeather: getWeatherTool,
-  celsiusConverter: celsiusConverterTool,
-}
+  CodeRunner: runCodeTool,
+};
