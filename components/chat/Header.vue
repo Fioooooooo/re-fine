@@ -3,7 +3,7 @@
     <div class="flex items-center justify-between">
       <div class="flex items-center space-x-3">
         <h1 class="text-lg font-medium">
-          <span style="color: #FF8800; font-weight: bold; margin-right: 2px">Re</span>
+          <span style="color: var(--ui-primary)" class="font-bold mr-1">Re</span>
           <span>Fine</span>
         </h1>
       </div>

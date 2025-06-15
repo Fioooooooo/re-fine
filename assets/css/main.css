@@ -21,3 +21,7 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #9ca3af;
 }
+
+* {
+  border-color: #E4E4E7;
+}
