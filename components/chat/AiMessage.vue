@@ -28,7 +28,7 @@ const props = defineProps<{
 </script>
 
 <template>
-  <div class="p-2 rounded-lg max-w-full">
+  <div class="rounded-lg max-w-full">
     <div v-for="(part, pIdx) in message.parts" :key="pIdx">
       <div v-if="part.type === 'text'" class="max-w-none">
         <div class="markdown-content" v-html="md.render(part.text)"></div>

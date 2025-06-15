@@ -2,27 +2,46 @@
 import { ref } from 'vue';
 
 const props = defineProps({
-  isSubmitting: {
+  isLoading: {
     type: Boolean,
     default: false,
   },
+  errorMessage: {
+    type: String,
+    default: '发生了错误',
+  },
 });
 
-const emit = defineEmits(['submit']);
+const emit = defineEmits(['submit', 'retry', 'stop']);
 
 const inputValue = ref('');
 const isComposing = ref(false); // 跟踪输入法组合状态
 
 const handleSubmit = () => {
-  if (inputValue.value.trim() && !props.isSubmitting && !isComposing.value) {
+  if (inputValue.value.trim() && !props.isLoading && !isComposing.value) {
     emit('submit', inputValue.value);
     inputValue.value = '';
   }
+};
+
+const handleRetry = () => {
+  emit('retry');
+};
+
+const handleStop = () => {
+  emit('stop');
 };
 </script>
 
 <template>
   <div class="w-full">
+    <div
+      v-if="errorMessage"
+      class="flex items-center p-1.5 text-sm font-medium mx-4 mb-2 rounded-xl bg-red-400/10 text-red-400"
+    >
+      <span class="flex-1 px-1.5">{{ errorMessage }}</span>
+      <UButton color="error" variant="soft" @click="handleRetry">重试</UButton>
+    </div>
     <div class="mb-4 bg-white py-3 px-4 rounded-lg shadow-md border border-gray-100">
       <form @submit.prevent="handleSubmit" class="relative">
         <UTextarea
@@ -31,7 +50,7 @@ const handleSubmit = () => {
           class="chat-input w-full resize-none"
           color="neutral"
           variant="none"
-          :disabled="isSubmitting"
+          :disabled="isLoading"
           :rows="3"
           :max-rows="6"
           autoresize
@@ -49,18 +68,32 @@ const handleSubmit = () => {
               color="neutral"
               variant="outline"
               size="xl"
-              :disabled="!inputValue.trim() || isSubmitting"
-              @click="handleSubmit"
+              :disabled="true"
             />
           </div>
-          <UButton
-            icon="i-lucide-arrow-up"
-            color="neutral"
-            variant="solid"
-            size="xl"
-            :disabled="!inputValue.trim() || isSubmitting"
-            @click="handleSubmit"
-          />
+          <div v-if="!isLoading">
+            <UTooltip text="发送">
+              <UButton
+                icon="i-lucide-arrow-up"
+                color="neutral"
+                variant="solid"
+                size="xl"
+                @click="handleSubmit"
+              />
+            </UTooltip>
+          </div>
+          <div v-else>
+            <UTooltip text="停止">
+              <UButton
+                v-if="isLoading"
+                icon="i-lucide-square"
+                color="neutral"
+                variant="solid"
+                size="xl"
+                @click="handleStop"
+              />
+            </UTooltip>
+          </div>
         </div>
       </form>
     </div>

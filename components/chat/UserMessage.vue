@@ -7,7 +7,7 @@ const props = defineProps<{
 </script>
 
 <template>
-  <div class="m-2 flex items-center">
+  <div class="flex items-center">
     <div class="mr-2 w-9 h-9 rounded-full bg-gray-200 flex items-center justify-center text-xs">ME</div>
     <div
       class="p-2 rounded-lg max-w-full bg-blue-50"

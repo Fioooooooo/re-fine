@@ -4,12 +4,10 @@ import type { UIMessage } from 'ai';
 import UserMessage from './UserMessage.vue';
 import AiMessage from './AiMessage.vue';
 
-const props = defineProps({
-  messages: {
-    type: Array<UIMessage>,
-    required: true,
-  },
-});
+const props = defineProps<{
+  messages: UIMessage[];
+  isLoading: boolean;
+}>();
 
 // 自动滚动到最新消息
 const messagesContainer = ref(null);
@@ -31,7 +29,7 @@ watch(
 
 <template>
   <div
-    class="max-h-full overflow-y-auto py-4 space-y-2"
+    class="max-h-full overflow-y-auto py-4 space-y-4"
     ref="messagesContainer"
   >
     <div
@@ -40,6 +38,10 @@ watch(
     >
       <UserMessage v-if="message.role === 'user'" :message="message" />
       <AiMessage v-else :message="message" />
+    </div>
+    <div v-show="isLoading" class="flex items-center text-sm text-gray-500">
+      <UIcon name="i-lucide-loader" class="animate-spin" />
+      <span class="ml-2">Generating...</span>
     </div>
   </div>
 </template>
