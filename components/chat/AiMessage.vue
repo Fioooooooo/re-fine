@@ -71,7 +71,7 @@ const props = defineProps<{
 
 <style lang="scss">
 @import url('highlight.js/styles/atom-one-dark.css');
-@import '~/assets/css/markdown.scss';
+@import url('~/assets/css/markdown.scss');
 </style>
 
 <style scoped lang="scss">

@@ -2,7 +2,7 @@ import { tool as createTool } from 'ai';
 import { z } from 'zod';
 import { Sandbox } from '@e2b/code-interpreter';
 
-const runCodeTool = createTool({
+export default createTool({
   description: 'Execute python code in a Jupyter notebook cell and return result.',
   parameters: z.object({
     code: z.string()
@@ -19,7 +19,3 @@ const runCodeTool = createTool({
     }
   },
 });
-
-export const chatTools = {
-  CodeRunner: runCodeTool,
-};

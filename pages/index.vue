@@ -2,7 +2,7 @@
 import { ref, watch } from 'vue';
 import { useChat } from '@ai-sdk/vue';
 
-import {createUserMessage} from '~/utils/message-creator';
+import {createUserMessage} from '~/utils/messageCreator';
 import ChatHeader from '~/components/chat/Header.vue';
 import ChatMessages from '~/components/chat/ChatMessages.vue';
 import ChatInput from '~/components/chat/ChatInput.vue';

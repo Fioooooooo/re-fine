@@ -11,7 +11,6 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
-    qwenApiKey: process.env.QWEN_API_KEY,
   },
 
   css: ['~/assets/css/main.css'],
