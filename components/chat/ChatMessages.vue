@@ -28,20 +28,47 @@ watch(
 </script>
 
 <template>
-  <div
-    class="max-h-full overflow-y-auto py-4 space-y-4"
-    ref="messagesContainer"
-  >
-    <div
-      v-for="(message, mIdx) in messages"
-      :key="message.id ? message.id : mIdx"
-    >
+  <div class="max-h-full overflow-y-auto py-4 space-y-4" ref="messagesContainer">
+    <div v-for="(message, mIdx) in messages" :key="message.id ? message.id : mIdx">
       <UserMessage v-if="message.role === 'user'" :message="message" />
       <AiMessage v-else :message="message" />
     </div>
-    <div v-show="isLoading" class="flex items-center text-sm text-gray-500">
+    <div v-if="isLoading" class="flex items-center text-sm text-gray-500">
       <UIcon name="i-lucide-loader" class="animate-spin" />
       <span class="ml-2">Generating...</span>
+    </div>
+    <div v-else class="flex items-center justify-between">
+      <div class="left">
+        <UButton
+          icon="i-lucide-refresh-cw"
+          size="md"
+          color="neutral"
+          variant="ghost"
+          class="rounded-md font-normal"
+        >
+          重新回答
+        </UButton>
+      </div>
+      <div class="right space-x-2">
+        <UTooltip text="答的不错">
+          <UButton
+            icon="i-lucide-thumbs-up"
+            size="md"
+            color="neutral"
+            variant="ghost"
+            class="rounded-md font-normal"
+          />
+        </UTooltip>
+        <UTooltip text="还不够好">
+          <UButton
+            icon="i-lucide-thumbs-down"
+            size="md"
+            color="neutral"
+            variant="ghost"
+            class="rounded-md font-normal"
+          />
+        </UTooltip>
+      </div>
     </div>
   </div>
 </template>

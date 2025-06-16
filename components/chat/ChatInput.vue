@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
 const props = defineProps({
   isLoading: {
@@ -24,11 +24,23 @@ const emit = defineEmits(['submit', 'retry', 'stop', 'cancelRetry', 'cancelConti
 
 const inputValue = ref('');
 const isComposing = ref(false); // 跟踪输入法组合状态
+const textareaRef = ref(null);
+
+const textareaFocus = () => {
+  setTimeout(() => {
+    const textarea = document.querySelector('.chat-input textarea');
+    if (textarea) {
+      textarea.focus();
+    }
+  }, 0);
+};
 
 const handleSubmit = () => {
   if (inputValue.value.trim() && !props.isLoading && !isComposing.value) {
     emit('submit', inputValue.value);
     inputValue.value = '';
+
+    textareaFocus();
   }
 };
 
@@ -39,11 +51,20 @@ const handleRetry = () => {
 const handleContinue = () => {
   inputValue.value = '继续';
   handleSubmit();
-}
+};
 
 const handleStop = () => {
   emit('stop');
 };
+
+watch(
+  () => props.isLoading,
+  loading => {
+    if (!loading) {
+      textareaFocus();
+    }
+  }
+);
 </script>
 
 <template>
@@ -53,20 +74,35 @@ const handleStop = () => {
       class="flex items-center p-1.5 text-sm font-medium mx-4 mb-2 rounded-xl bg-red-400/10 text-red-400"
     >
       <span class="flex-1 px-1.5">{{ errorMessage }}</span>
-      <UButton color="error" variant="soft" @click="handleRetry">重试</UButton>
-      <UButton icon="i-lucide-x" size="xs" color="error" variant="link" @click="emit('cancelRetry')" />
+      <UButton color="error" variant="soft" @click="handleRetry" class="rounded-xl">重试</UButton>
+      <UButton
+        icon="i-lucide-x"
+        size="xs"
+        color="error"
+        variant="link"
+        @click="emit('cancelRetry')"
+      />
     </div>
     <div
       v-if="canContinue && finishReason"
       class="flex items-center p-1.5 text-sm font-medium mx-4 mb-2 rounded-xl bg-orange-400/10 text-orange-400"
     >
       <span class="flex-1 px-1.5">{{ finishReason }}</span>
-      <UButton color="error" variant="soft" @click="handleContinue">继续</UButton>
-      <UButton icon="i-lucide-x" size="xs" color="error" variant="link" @click="emit('cancelContinue')" />
+      <UButton color="error" variant="soft" @click="handleContinue" class="rounded-xl">
+        继续
+      </UButton>
+      <UButton
+        icon="i-lucide-x"
+        size="xs"
+        color="error"
+        variant="link"
+        @click="emit('cancelContinue')"
+      />
     </div>
-    <div class="mb-4 bg-white py-3 px-4 rounded-lg shadow-md border border-gray-100">
+    <div class="mb-4 bg-white py-3 px-4 rounded-2xl shadow-md border border-gray-100">
       <form @submit.prevent="handleSubmit" class="relative">
         <UTextarea
+          ref="textareaRef"
           v-model="inputValue"
           placeholder="有什么任务需要我来执行的？"
           class="chat-input w-full resize-none"
@@ -82,6 +118,7 @@ const handleStop = () => {
           @keydown.enter.prevent="handleSubmit"
           @compositionstart="isComposing = true"
           @compositionend="isComposing = false"
+          autofocus
         />
         <div class="flex items-center">
           <div class="flex-1 gap-2 flex items-center">
@@ -91,6 +128,7 @@ const handleStop = () => {
               variant="outline"
               size="xl"
               :disabled="true"
+              class="rounded-xl"
             />
           </div>
           <div v-if="!isLoading">
@@ -101,6 +139,7 @@ const handleStop = () => {
                 variant="solid"
                 size="xl"
                 @click="handleSubmit"
+                class="rounded-xl"
               />
             </UTooltip>
           </div>
@@ -113,15 +152,16 @@ const handleStop = () => {
                 variant="solid"
                 size="xl"
                 @click="handleStop"
+                class="rounded-xl"
               />
             </UTooltip>
           </div>
         </div>
       </form>
     </div>
-    <!--    <div class="my-2 text-xs text-gray-500 flex justify-end">-->
-    <!--      <div>由 CI 提供支持</div>-->
-    <!--    </div>-->
+    <div class="my-2 text-xs text-gray-500 flex justify-center">
+      <div>以上内容均由AI生成, 仅供参考和借鉴</div>
+    </div>
   </div>
 </template>
 
