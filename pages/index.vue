@@ -2,23 +2,26 @@
 import { ref, computed } from 'vue';
 import { useChat } from '@ai-sdk/vue';
 
-import { createUserMessage } from '~/utils/messageCreator';
+import { createUserMessage, mapFinishReason } from '~/utils/messageHelper';
 import ChatHeader from '~/components/header/Header.vue';
 import ChatMessages from '~/components/chat/ChatMessages.vue';
 import ChatInput from '~/components/chat/ChatInput.vue';
 import CodePreview from '~/components/preview/CodePreview.vue';
 
 const { messages, status, append, reload, stop } = useChat({
-  maxSteps: 20,
+  maxSteps: 60,
   onToolCall({ toolCall }) {
     console.log('onToolCall', toolCall);
   },
   onFinish(message, options) {
     console.log('onFinish message', message);
     console.log('onFinish options', options);
+    const mapped = mapFinishReason(options.finishReason);
+    canContinue.value = mapped.canContinue;
+    finishReason.value = mapped.finishReason;
   },
   onError(error) {
-    // console.log('onError', error.message);
+    console.log('onError', error);
     errorMessage.value = error.message;
   },
 });
@@ -26,9 +29,16 @@ const { messages, status, append, reload, stop } = useChat({
 const isLoading = computed(() => ['submitted', 'streaming'].includes(status.value));
 const codePreviewVisible = ref(false);
 const errorMessage = ref('');
+const canContinue = ref(false);
+const finishReason = ref('');
 
 const onMessageSubmit = (inputMessage: string) => {
   append(createUserMessage(inputMessage));
+};
+
+const onRetry = () => {
+  errorMessage.value = '';
+  reload();
 };
 </script>
 
@@ -44,9 +54,18 @@ const onMessageSubmit = (inputMessage: string) => {
         <ChatInput
           :is-loading="isLoading"
           :error-message="errorMessage"
+          :can-continue="canContinue"
+          :finish-reason="finishReason"
           @submit="onMessageSubmit"
-          @retry="reload"
+          @retry="onRetry"
           @stop="stop"
+          @cancel-continue="() => {
+            canContinue = false;
+            finishReason = '';
+          }"
+          @cancel-retry="() => {
+            errorMessage = '';
+          }"
         />
       </div>
       <div

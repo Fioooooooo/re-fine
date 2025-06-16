@@ -10,9 +10,17 @@ const props = defineProps({
     type: String,
     default: '发生了错误',
   },
+  finishReason: {
+    type: String,
+    default: '',
+  },
+  canContinue: {
+    type: Boolean,
+    default: false,
+  },
 });
 
-const emit = defineEmits(['submit', 'retry', 'stop']);
+const emit = defineEmits(['submit', 'retry', 'stop', 'cancelRetry', 'cancelContinue']);
 
 const inputValue = ref('');
 const isComposing = ref(false); // 跟踪输入法组合状态
@@ -28,6 +36,11 @@ const handleRetry = () => {
   emit('retry');
 };
 
+const handleContinue = () => {
+  inputValue.value = '继续';
+  handleSubmit();
+}
+
 const handleStop = () => {
   emit('stop');
 };
@@ -41,6 +54,15 @@ const handleStop = () => {
     >
       <span class="flex-1 px-1.5">{{ errorMessage }}</span>
       <UButton color="error" variant="soft" @click="handleRetry">重试</UButton>
+      <UButton icon="i-lucide-x" size="xs" color="error" variant="link" @click="emit('cancelRetry')" />
+    </div>
+    <div
+      v-if="canContinue && finishReason"
+      class="flex items-center p-1.5 text-sm font-medium mx-4 mb-2 rounded-xl bg-orange-400/10 text-orange-400"
+    >
+      <span class="flex-1 px-1.5">{{ finishReason }}</span>
+      <UButton color="error" variant="soft" @click="handleContinue">继续</UButton>
+      <UButton icon="i-lucide-x" size="xs" color="error" variant="link" @click="emit('cancelContinue')" />
     </div>
     <div class="mb-4 bg-white py-3 px-4 rounded-lg shadow-md border border-gray-100">
       <form @submit.prevent="handleSubmit" class="relative">
