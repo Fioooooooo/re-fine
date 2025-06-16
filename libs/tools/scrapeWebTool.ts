@@ -87,13 +87,13 @@ const execute = async (params: WebScraperParams): Promise<WebScraperResult> => {
 };
 
 export default createTool({
-  description: 'Extract information from a webpage.',
+  description: '从网页提取信息。该工具可以访问指定 URL，获取网页内容，并可选择性地清理 HTML 结构，提取主要文本内容。',
   parameters: z.object({
     url: z.string()
-      .describe('The URL of the webpage to scrape'),
+      .describe('需要访问的网页 URL，必须是完整的网址，包含 http:// 或 https:// 前缀'),
     cleanHtml: z.boolean()
       .optional()
-      .describe('Optional. Whether to clean the HTML of the webpage'),
+      .describe('是否清理 HTML 并提取主要文本内容。设置为 true 时，将使用 Readability 算法提取正文，并移除多余的 HTML 标签'),
   }),
   execute: execute,
 });

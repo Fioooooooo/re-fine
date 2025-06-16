@@ -5,23 +5,23 @@ import { getSandbox } from '~/utils/sandboxUtil';
 
 export default createTool({
   description:
-    'Write a content to a file in a sandbox environment, will return file content and current sandbox id which can be re-used to connect to the sandbox.',
+    '在沙箱环境中写入文件内容。该工具可以创建或修改指定路径的文件，支持同时写入多个文件。每次调用都会返回沙箱 ID，可用于后续操作中重复使用同一沙箱环境。',
   parameters: z.object({
     sandboxId: z
       .string()
       .optional()
       .nullable()
-      .describe('Optional. If you want to use an existing sandbox, provide the sandbox id'),
+      .describe('可选参数。如果要使用现有沙箱环境，请提供沙箱 ID。若不提供，将创建新的沙箱环境'),
     entries: z
       .array(
         z
           .object({
-            filePath: z.string().describe('The absolute file path to read'),
-            content: z.string().describe('The content to write'),
+            filePath: z.string().describe('要写入的文件的绝对路径，例如 /home/user/file.txt'),
+            content: z.string().describe('要写入文件的内容，支持任何文本格式'),
           })
-          .describe('The entry to write')
+          .describe('单个文件的写入信息，包含路径和内容')
       )
-      .describe('The entries to write, you can write multiple entries at the same time'),
+      .describe('要写入的文件列表，可同时写入多个文件，每个文件需指定路径和内容'),
   }),
   execute: async ({ sandboxId, entries }): Promise<SandboxWriteFileResult> => {
     let sandbox;

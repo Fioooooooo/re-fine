@@ -6,20 +6,20 @@ import { putBuffer } from '~/utils/ossUtil';
 
 export default createTool({
   description:
-    'Read a file in a sandbox environment (you can download it if the user requires), will return file content and current sandbox id which can be re-used to connect to the sandbox.',
+    '在沙箱环境中读取文件内容。该工具可以读取指定路径的文件，并返回文件内容。如果需要，还可以生成文件的下载链接。每次调用都会返回沙箱 ID，可用于后续操作中重复使用同一沙箱环境。',
   parameters: z.object({
     sandboxId: z
       .string()
       .optional()
       .nullable()
-      .describe('Optional. If you want to use an existing sandbox, provide the sandbox id'),
-    filePath: z.string().describe('The absolute file path to read'),
+      .describe('可选参数。如果要使用现有沙箱环境，请提供沙箱 ID。若不提供，将创建新的沙箱环境'),
+    filePath: z.string().describe('要读取的文件的绝对路径，例如 /home/user/file.txt'),
     download: z
       .boolean()
       .optional()
       .default(false)
       .describe(
-        'Optional. Whether to download the file, if the user requires to download, you must show the downloadUrl.'
+        '是否生成文件下载链接。设置为 true 时，将不返回文件内容，而是提供下载链接。当用户需要下载文件时，必须展示此链接'
       ),
   }),
   execute: async ({ sandboxId, filePath, download }): Promise<SandboxReadFileResult> => {
