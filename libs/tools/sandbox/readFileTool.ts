@@ -19,7 +19,7 @@ export default createTool({
       .optional()
       .default(false)
       .describe(
-        '是否生成文件下载链接。设置为 true 时，将不返回文件内容，而是提供下载链接。当用户需要下载文件时，必须展示此链接'
+        '是否生成文件下载链接。设置为 true 时，将不返回文件内容，而是提供下载链接。当用户需要下载文件时，必须在你的回答中展示此链接，以便用户可以下载文件'
       ),
   }),
   execute: async ({ sandboxId, filePath, download }): Promise<SandboxReadFileResult> => {
