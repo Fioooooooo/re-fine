@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
+import { formatBytes, isNewFile, putOssFiles } from '~/utils/file.client';
+import type { UploadedFile } from '~/utils/file.client';
 
 const props = defineProps({
   isLoading: {
@@ -22,7 +24,11 @@ const props = defineProps({
 
 const emit = defineEmits(['submit', 'retry', 'stop', 'cancelRetry', 'cancelContinue']);
 
+
+
 const inputValue = ref('');
+const filesValue = ref<Array<File>>([]);
+const uploadedFiles = ref<Array<UploadedFile>>([]);
 const isComposing = ref(false); // 跟踪输入法组合状态
 const textareaRef = ref(null);
 
@@ -65,6 +71,30 @@ watch(
     }
   }
 );
+
+const onClickUpload = (e: Event) => {
+  e.preventDefault();
+  const fileInput = document.getElementById('multimodal');
+  if (fileInput) {
+    fileInput.click();
+  }
+};
+
+const handleFileChange = async (e: Event) => {
+  e.preventDefault();
+  const files = (e.target as HTMLInputElement).files;
+
+  if (files && files.length > 0) {
+    const newFiles = Array.from(files).filter(f => isNewFile(f, filesValue.value));
+    filesValue.value = [...filesValue.value, ...newFiles];
+
+    await putOssFiles(newFiles, (uploadedFile: UploadedFile) => {
+      uploadedFiles.value.push(uploadedFile)
+    })
+  }
+};
+
+
 </script>
 
 <template>
@@ -84,7 +114,7 @@ watch(
       />
     </div>
     <div
-      v-if="canContinue && finishReason"
+      v-if="finishReason && canContinue"
       class="flex items-center p-1.5 text-sm font-medium mx-4 mb-2 rounded-xl bg-orange-400/10 text-orange-400"
     >
       <span class="flex-1 px-1.5">{{ finishReason }}</span>
@@ -98,6 +128,32 @@ watch(
         variant="link"
         @click="emit('cancelContinue')"
       />
+    </div>
+    <div
+      v-show="uploadedFiles.length > 0"
+      class="bg-white py-3 px-4 pb-8 -mb-5 rounded-t-2xl shadow-md border border-gray-100"
+    >
+      <div class="grid grid-cols-3 gap-6">
+        <UCard
+          v-for="file in uploadedFiles"
+          :key="file.url"
+          variant="subtle"
+          class="col-span-1"
+          :ui="{
+            body: 'p-3 sm:p-3',
+          }"
+        >
+          <div class="flex">
+            <img :src="file.url" :alt="file.name" class="w-10 h-10 mr-2 rounded-lg object-cover" />
+            <div class="flex-1">
+              <div class="font-semibold text-sm">
+                {{ file.name }}
+              </div>
+              <div class="text-xs text-gray-500">{{ file.type }} {{ formatBytes(file.size) }}</div>
+            </div>
+          </div>
+        </UCard>
+      </div>
     </div>
     <div class="mb-4 bg-white py-3 px-4 rounded-2xl shadow-md border border-gray-100">
       <form @submit.prevent="handleSubmit" class="relative">
@@ -122,14 +178,25 @@ watch(
         />
         <div class="flex items-center">
           <div class="flex-1 gap-2 flex items-center">
-            <UButton
-              icon="i-lucide-paperclip"
-              color="neutral"
-              variant="outline"
-              size="xl"
-              :disabled="true"
-              class="rounded-xl"
-            />
+            <div class="upload">
+              <input
+                type="file"
+                id="multimodal"
+                name="multimodal"
+                accept="*"
+                :multiple="true"
+                class="hidden"
+                @change="handleFileChange"
+              />
+              <UButton
+                icon="i-lucide-paperclip"
+                color="neutral"
+                variant="outline"
+                size="xl"
+                class="rounded-xl"
+                @click="onClickUpload"
+              />
+            </div>
           </div>
           <div v-if="!isLoading">
             <UTooltip text="发送">

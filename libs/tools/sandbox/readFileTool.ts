@@ -2,7 +2,7 @@ import { tool as createTool } from 'ai';
 import { z } from 'zod';
 import type { SandboxReadFileResult } from '../types';
 import { getSandbox } from '~/utils/sandboxUtil';
-import { putBuffer } from '~/utils/ossUtil';
+import { ossPut } from '~/utils/oss.server';
 
 export default createTool({
   description:
@@ -32,7 +32,7 @@ export default createTool({
       let downloadUrl = '';
       if (download) {
         const fileName = filePath.split('/').pop();
-        downloadUrl = await putBuffer(
+        downloadUrl = await ossPut(
           `chat/user_id/conversation_id/${fileName}`,
           Buffer.from(fileContent)
         );
