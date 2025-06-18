@@ -223,6 +223,7 @@ const handleFileRemove = (index: number) => {
                 size="xl"
                 class="rounded-xl"
                 @click="onClickUpload"
+                :disabled="isLoading"
               />
             </div>
           </div>

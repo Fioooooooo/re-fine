@@ -22,7 +22,7 @@ const useMultiModal = (message: Message): boolean => {
 
   // 原始 attachments 有文件
   const attachments = message.experimental_attachments;
-  return !attachments || attachments.length === 0;
+  return (attachments && attachments.length > 0) || false;
 };
 
 /**
