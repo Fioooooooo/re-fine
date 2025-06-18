@@ -4,8 +4,8 @@ const client = new OSS({
   accessKeyId: process.env.OSS_ACCESS_KEY_ID as string,
   accessKeySecret: process.env.OSS_ACCESS_KEY_SECRET as string,
   region: process.env.OSS_REGION as string,
-  bucket: useRuntimeConfig().ossBucket as string,
-  endpoint: process.env.OSS_BUCKET as string,
+  bucket: process.env.OSS_BUCKET as string,
+  endpoint: process.env.OSS_ENDPOINT as string,
 });
 
 export const ossPut = async (objectName: string, content: any): Promise<string> => {

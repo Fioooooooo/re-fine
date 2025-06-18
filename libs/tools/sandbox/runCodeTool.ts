@@ -1,6 +1,6 @@
 import { tool as createTool } from 'ai';
 import { z } from 'zod';
-import { getSandbox } from '~/utils/sandboxUtil';
+import { getSandbox } from '~/utils/e2b_sandbox.server';
 import type {SandboxRunCodeResult} from '../types';
 
 export default createTool({

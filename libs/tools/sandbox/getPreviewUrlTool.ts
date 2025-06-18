@@ -1,7 +1,7 @@
 import { tool as createTool } from 'ai';
 import { z } from 'zod';
 import type { SandboxPreviewResult } from '../types';
-import { getSandbox } from '~/utils/sandboxUtil';
+import { getSandbox } from '~/utils/e2b_sandbox.server';
 
 export default createTool({
   description: '获取沙箱应用的公开预览 URL。该工具可以为在沙箱中运行的 Web 应用生成一个可通过公共互联网访问的链接，使用户能够在浏览器中查看和交互应用。',

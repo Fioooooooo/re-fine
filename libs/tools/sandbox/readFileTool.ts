@@ -1,8 +1,11 @@
 import { tool as createTool } from 'ai';
 import { z } from 'zod';
 import type { SandboxReadFileResult } from '../types';
-import { getSandbox } from '~/utils/sandboxUtil';
+import { getSandbox } from '~/utils/e2b_sandbox.server';
 import { ossPut } from '~/utils/oss.server';
+import { Sandbox } from '@e2b/code-interpreter';
+import fs from 'fs';
+import path from 'path';
 
 export default createTool({
   description:
@@ -23,28 +26,63 @@ export default createTool({
       ),
   }),
   execute: async ({ sandboxId, filePath, download }): Promise<SandboxReadFileResult> => {
-    let sandbox;
+    let sandbox : Sandbox | undefined;
+    const fileName = filePath.split('/').pop() || 'unknown_file';
+
     try {
       sandbox = await getSandbox(sandboxId);
 
       let fileContent = await sandbox.files.read(filePath);
 
       let downloadUrl = '';
-      if (download) {
-        const fileName = filePath.split('/').pop();
-        downloadUrl = await ossPut(
-          `chat/user_id/conversation_id/${fileName}`,
-          Buffer.from(fileContent)
-        );
-        fileContent = '';
+      if (!download) {
+        return {
+          sandboxId: sandbox?.sandboxId || '',
+          filePath: filePath,
+          content: fileContent,
+          downloadUrl,
+        };
       }
 
-      return {
-        sandboxId: sandbox?.sandboxId || '',
-        filePath: filePath,
-        content: fileContent,
-        downloadUrl,
-      };
+      const tmpDir = path.resolve('/tmp');
+      const localFilePath = path.join(tmpDir, fileName);
+      try {
+        if (!fs.existsSync(tmpDir)) {
+          fs.mkdirSync(tmpDir, { recursive: true });
+        }
+
+        // 写入文件
+        fs.writeFileSync(localFilePath, fileContent);
+        console.log(`文件已写入到: ${localFilePath}`);
+
+        // 上传到 OSS
+        downloadUrl = await ossPut(
+          `chat/user_id/conversation_id/${fileName}`,
+          localFilePath,
+        );
+
+        fileContent = '';
+
+        return {
+          sandboxId: sandbox?.sandboxId || '',
+          filePath: filePath,
+          content: fileContent,
+          downloadUrl,
+        };
+      } catch (err: Error | any) {
+        console.error('写入文件或上传到 OSS 时出错:', err);
+        return {
+          sandboxId: sandbox?.sandboxId || '',
+          filePath: filePath,
+          content: fileContent,
+          downloadUrl,
+          error: '生成下载链接失败, ' + err.message,
+        };
+      } finally {
+        if (fs.existsSync(localFilePath)) {
+          fs.unlinkSync(localFilePath);
+        }
+      }
     } catch (error: Error | any) {
       return {
         sandboxId: sandbox?.sandboxId || '',

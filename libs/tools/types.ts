@@ -1,4 +1,4 @@
-import { ExecutionError, Result } from '@e2b/code-interpreter';
+import { type CommandResult, ExecutionError, Result } from '@e2b/code-interpreter';
 import type { Logs } from '@e2b/code-interpreter';
 import type { EntryInfo } from 'e2b';
 
@@ -28,6 +28,16 @@ export interface SandboxReadFileResult {
 export interface SandboxWriteFileResult {
   sandboxId: string; // 沙箱 ID
   entryInfo: EntryInfo[]; // 文件信息
+  error?: string; // 错误信息
+}
+
+export interface SandboxReceiveFileResult {
+  sandboxId: string; // 沙箱 ID
+  results?: {
+    filePath: string; // 文件路径
+    url: string; // 文件url
+    commandResult: CommandResult; // 命令执行结果
+  }[];
   error?: string; // 错误信息
 }
 

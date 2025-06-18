@@ -24,8 +24,6 @@ const props = defineProps({
 
 const emit = defineEmits(['submit', 'retry', 'stop', 'cancelRetry', 'cancelContinue']);
 
-
-
 const inputValue = ref('');
 const filesValue = ref<Array<File>>([]);
 const uploadedFiles = ref<Array<UploadedFile>>([]);
@@ -34,7 +32,7 @@ const textareaRef = ref(null);
 
 const textareaFocus = () => {
   setTimeout(() => {
-    const textarea = document.querySelector('.chat-input textarea');
+    const textarea = document.querySelector('.chat-input textarea') as HTMLTextAreaElement;
     if (textarea) {
       textarea.focus();
     }
@@ -43,8 +41,18 @@ const textareaFocus = () => {
 
 const handleSubmit = () => {
   if (inputValue.value.trim() && !props.isLoading && !isComposing.value) {
-    emit('submit', inputValue.value);
+    emit('submit', {
+      text: inputValue.value,
+      files: uploadedFiles.value,
+    });
+
     inputValue.value = '';
+    uploadedFiles.value = [];
+    filesValue.value = [];
+    const fileInput = document.getElementById('multimodal') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = '';
+    }
 
     textareaFocus();
   }
@@ -74,7 +82,7 @@ watch(
 
 const onClickUpload = (e: Event) => {
   e.preventDefault();
-  const fileInput = document.getElementById('multimodal');
+  const fileInput = document.getElementById('multimodal') as HTMLInputElement;
   if (fileInput) {
     fileInput.click();
   }
@@ -89,12 +97,15 @@ const handleFileChange = async (e: Event) => {
     filesValue.value = [...filesValue.value, ...newFiles];
 
     await putOssFiles(newFiles, (uploadedFile: UploadedFile) => {
-      uploadedFiles.value.push(uploadedFile)
-    })
+      uploadedFiles.value.push(uploadedFile);
+    });
   }
 };
 
-
+const handleFileRemove = (index: number) => {
+  uploadedFiles.value.splice(index, 1);
+  filesValue.value = filesValue.value.splice(index, 1);
+};
 </script>
 
 <template>
@@ -133,24 +144,41 @@ const handleFileChange = async (e: Event) => {
       v-show="uploadedFiles.length > 0"
       class="bg-white py-3 px-4 pb-8 -mb-5 rounded-t-2xl shadow-md border border-gray-100"
     >
-      <div class="grid grid-cols-3 gap-6">
+      <div class="grid grid-cols-3 gap-6 w-full">
         <UCard
-          v-for="file in uploadedFiles"
+          v-for="(file, idx) in uploadedFiles"
           :key="file.url"
           variant="subtle"
-          class="col-span-1"
+          class="col-span-1 w-full overflow-hidden"
           :ui="{
-            body: 'p-3 sm:p-3',
+            body: 'p-3 sm:p-3 relative max-w-full',
           }"
         >
-          <div class="flex">
-            <img :src="file.url" :alt="file.name" class="w-10 h-10 mr-2 rounded-lg object-cover" />
-            <div class="flex-1">
-              <div class="font-semibold text-sm">
+          <div class="flex w-full overflow-hidden">
+            <img
+              v-if="file.type.startsWith('image/')"
+              :src="file.url"
+              :alt="file.name"
+              class="w-10 h-10 mr-2 rounded-lg object-cover"
+            />
+            <UIcon v-else name="i-lucide-files" class="w-8 h-8 mr-2 rounded-lg object-cover" />
+            <div class="flex-1 min-w-0 overflow-hidden">
+              <div class="font-semibold text-sm overflow-hidden whitespace-nowrap text-ellipsis">
                 {{ file.name }}
               </div>
-              <div class="text-xs text-gray-500">{{ file.type }} {{ formatBytes(file.size) }}</div>
+              <div class="text-xs text-gray-500 flex items-center w-full">
+                <div class="flex-1 min-w-0 overflow-hidden whitespace-nowrap text-ellipsis mr-1">
+                  {{ file.type }}
+                </div>
+                <div class="flex-shrink-0">{{ formatBytes(file.size) }}</div>
+              </div>
             </div>
+          </div>
+          <div
+            class="absolute top-1 right-1 cursor-pointer size-4 flex items-center justify-center rounded-full bg-gray-700 hover:bg-gray-500"
+            @click="handleFileRemove(idx)"
+          >
+            <UIcon name="i-lucide-x" class="size-3 text-white" />
           </div>
         </UCard>
       </div>

@@ -1,14 +1,20 @@
 import type { Message } from 'ai';
 import { generateId } from 'ai';
+import type { UploadedFile } from '~/utils/file.client';
 
-export const createUserMessage = (message: string): Message => {
+export const createUserMessage = (message: { text: string, files?: UploadedFile[] }): Message => {
   return {
     id: generateId(),
     role: 'user',
-    content: message,
+    content: message.text,
     parts: [
-      { type: 'text', text: message },
+      { type: 'text', text: message.text },
     ],
+    experimental_attachments: message.files?.map((file) => ({
+      name: file.name,
+      contentType: file.type,
+      url: file.url,
+    })),
   };
 };
 

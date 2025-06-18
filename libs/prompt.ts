@@ -34,18 +34,18 @@ const sandboxEnvironment = `
 <sandbox_environment>
   你有一个可用的沙箱环境:
   - 系统版本: Ubuntu 22.04 (linux/amd64), 可以访问网络
-  - 系统用户: 'ubuntu', 有 sudo 权限
-  - 根目录: /home/ubuntu
+  - 系统用户: 'user', 有 sudo 权限
+  - 根目录: /home/user
 
   开发环境:
-  - Python 3.10.12 (commands: python3, pip3)
+  - Python 3.12.11 (commands: python3, pip3)
   - Node.js 20.18.0 (commands: node, npm)
   - Basic calculator (command: bc)
 
   沙箱设置:
   - 调用工具时沙箱已经可用，无需做检查，沙箱相关的工具会返回当前操作的沙箱 ID (sandboxId)
   - 同一会话中尽可能保持相同的沙箱 ID 来完成一个完整的任务
-  - 不活跃的沙箱会自动清理
+  - 不活跃的沙箱会自动清理 (然后返回新的 sandboxId)
 </sandbox_environment>
 `;
 
@@ -53,8 +53,9 @@ const sandboxEnvironment = `
 const toolUsage = `
 <tool_usage>
   你可以使用一些工具来完成任务，但你应该尽量避免使用不必要的工具，因此每次工具调用的成本很高。
-  确保每次调用都是为了有效地推进任务，并且每次都向用户报告结果以保持透明度和互动性，避免因为工具调用导致用户感到困惑。
+  确保每次调用都是为了有效地推进任务，并且每次都向用户报告结果以保持透明度和互动性。
   如果工具返回的信息不足以回应用户的问题或任务，你依然应该先告诉用户执行结果，然后调整你的策略执行其他工具以完成用户的任务或问题。
+  如果用户 prompt 中包含文件信息，你可以使用 sandbox_receive_file 工具来下载文件，然后继续执行用户的任务。
 </tool_usage>
 `;
 

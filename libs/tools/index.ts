@@ -3,6 +3,7 @@ import sandboxRunCommandTool from './sandbox/runCommandTool';
 import sandboxWriteFileTool from './sandbox/writeFileTool';
 import sandboxReadFileTool from './sandbox/readFileTool';
 import sandboxGetPreviewUrlTool from './sandbox/getPreviewUrlTool';
+import sandboxReceiveFileTool from './sandbox/receiveFileTool';
 import scrapeWebTool from './scrapeWebTool';
 
 export const chatTools = {
@@ -11,5 +12,6 @@ export const chatTools = {
   sandbox_write_file: sandboxWriteFileTool,
   sandbox_read_file: sandboxReadFileTool,
   sandbox_get_preview_url: sandboxGetPreviewUrlTool,
+  sandbox_receive_file: sandboxReceiveFileTool,
   scrape_web: scrapeWebTool
 };

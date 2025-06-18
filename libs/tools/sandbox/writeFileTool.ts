@@ -1,7 +1,7 @@
 import { tool as createTool } from 'ai';
 import { z } from 'zod';
 import type { SandboxWriteFileResult } from '../types';
-import { getSandbox } from '~/utils/sandboxUtil';
+import { getSandbox } from '~/utils/e2b_sandbox.server';
 
 export default createTool({
   description:

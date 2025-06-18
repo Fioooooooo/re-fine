@@ -87,7 +87,7 @@ const execute = async (params: WebScraperParams): Promise<WebScraperResult> => {
 };
 
 export default createTool({
-  description: '从网页提取信息。该工具可以访问指定 URL，获取网页内容，并可选择性地清理 HTML 结构，提取主要文本内容。',
+  description: '从网页提取信息。该工具可以访问指定 URL，获取网页的 HTML 内容，并可选择性地清理 HTML 结构，提取主要文本内容。此工具不适用于下载文件',
   parameters: z.object({
     url: z.string()
       .describe('需要访问的网页 URL，必须是完整的网址，包含 http:// 或 https:// 前缀'),

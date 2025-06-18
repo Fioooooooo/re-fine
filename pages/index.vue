@@ -2,11 +2,12 @@
 import { ref, computed } from 'vue';
 import { useChat } from '@ai-sdk/vue';
 
-import { createUserMessage, mapFinishReason } from '~/utils/messageHelper';
+import { createUserMessage, mapFinishReason } from '~/utils/message_helper.client';
 import ChatHeader from '~/components/header/Header.vue';
 import ChatMessages from '~/components/chat/ChatMessages.vue';
 import ChatInput from '~/components/chat/ChatInput.vue';
 import CodePreview from '~/components/preview/CodePreview.vue';
+import type { UploadedFile } from '~/utils/file.client';
 
 const { messages, status, append, reload, stop } = useChat({
   maxSteps: 60,
@@ -32,8 +33,8 @@ const errorMessage = ref('');
 const canContinue = ref(false);
 const finishReason = ref('');
 
-const onMessageSubmit = (inputMessage: string) => {
-  append(createUserMessage(inputMessage));
+const onMessageSubmit = (userMessage: { text: string, files?: UploadedFile[] }) => {
+  append(createUserMessage(userMessage));
 };
 
 const onRetry = () => {
