@@ -28,41 +28,43 @@ const props = defineProps<{
 </script>
 
 <template>
-  <div class="rounded-lg max-w-full">
-    <div v-for="(part, pIdx) in message.parts" :key="pIdx">
+  <div class="rounded-lg max-w-full space-y-2">
+    <div v-for="(part, pIdx) in message.parts?.filter((p) => ['text', 'tool-invocation'].includes(p.type))"
+         :key="pIdx"
+         class="space-y-2"
+    >
       <div v-if="part.type === 'text'" class="max-w-none">
         <div class="markdown-content" v-html="md.render(part.text)"></div>
       </div>
       <div
         v-if="part.type === 'tool-invocation'"
-        class="bg-gray-100 p-2 rounded text-sm font-mono my-2"
+        class="bg-gray-100 p-2 rounded text-sm font-mono"
       >
-        <input
-          type="checkbox"
-          :id="`tool-${part.toolInvocation.toolCallId}`"
-          class="tool-toggle hidden"
-        />
         <label
           :for="`tool-${part.toolInvocation.toolCallId}`"
-          class="flex items-center cursor-pointer"
+          class="flex items-center cursor-pointer space-x-2"
         >
-          <UIcon name="i-lucide-activity" class="size-4 mr-2" />
+          <UIcon name="i-lucide-activity" class="size-4" />
           <span>工具调用</span>
-          <span class="ml-2 font-bold">{{ part?.toolInvocation?.toolName }}</span>
-          <UIcon
-            name="i-lucide-chevron-down"
-            class="size-4 ml-auto toggle-icon transition-transform"
-          />
+          <span class="font-bold">{{ part?.toolInvocation?.toolName }}</span>
+          <span class="flex-1 overflow-hidden text-ellipsis line-clamp-1">{{ part?.toolInvocation?.args }}</span>
         </label>
-        <div class="tool-details mt-2 hidden">
-          <div>
-            <span class="font-medium">参数:</span>
-            <span class="ml-1">{{ part?.toolInvocation?.args }}</span>
-          </div>
-          <div class="mt-1">
-            <span class="font-medium">结果:</span>
-            <span class="ml-1">{{ part?.toolInvocation?.result }}</span>
-          </div>
+      </div>
+      <div v-if="part.type === 'tool-invocation'
+        && part.toolInvocation.toolName === 'search_web'
+        && part.toolInvocation.state === 'result'
+        && part.toolInvocation.result?.results?.length > 0"
+           class="bg-gray-100 py-2 rounded text-sm"
+      >
+        <div
+          v-for="(result, idx) in part.toolInvocation.result.results"
+          :key="idx"
+          class="w-full overflow-hidden bg-gray-100 px-2 py-1 hover:bg-gray-200"
+        >
+          <a class="flex items-center" :href="result.url" target="_blank">
+            <UIcon name="i-lucide-link" class="size-4 mr-2" />
+            <span class="font-bold overflow-hidden text-ellipsis line-clamp-1">{{ result.title }}</span>
+          </a>
         </div>
       </div>
     </div>
@@ -75,17 +77,4 @@ const props = defineProps<{
 </style>
 
 <style scoped lang="scss">
-/* 工具调用展开/收起效果 */
-.tool-toggle:checked + label .toggle-icon {
-  transform: rotate(180deg);
-}
-
-.tool-toggle:checked ~ .tool-details {
-  display: block;
-}
-
-.tool-details {
-  overflow: hidden;
-  transition: all 0.3s ease;
-}
 </style>

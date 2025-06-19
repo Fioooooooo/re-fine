@@ -39,7 +39,7 @@ const sandboxEnvironment = `
 
   开发环境:
   - Python 3.12.11 (commands: python3, pip3)
-  - Node.js 20.18.0 (commands: node, npm)
+  - Node.js 20.19.2 (commands: node, npm)
   - Basic calculator (command: bc)
 
   沙箱设置:

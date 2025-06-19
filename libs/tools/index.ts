@@ -5,6 +5,7 @@ import sandboxReadFileTool from './sandbox/readFileTool';
 import sandboxGetPreviewUrlTool from './sandbox/getPreviewUrlTool';
 import sandboxReceiveFileTool from './sandbox/receiveFileTool';
 import scrapeWebTool from './scrapeWebTool';
+import searchWebTool from './searchWebTool';
 
 export const chatTools = {
   sandbox_run_code: sandboxRunCodeTool,
@@ -13,5 +14,6 @@ export const chatTools = {
   sandbox_read_file: sandboxReadFileTool,
   sandbox_get_preview_url: sandboxGetPreviewUrlTool,
   sandbox_receive_file: sandboxReceiveFileTool,
-  scrape_web: scrapeWebTool
+  scrape_web: scrapeWebTool,
+  search_web: searchWebTool
 };

@@ -8,7 +8,7 @@ const props = defineProps<{
 
 <template>
   <div class="flex items-center">
-    <div class="self-start mr-2 w-9 h-9 rounded-full bg-gray-200 flex items-center justify-center text-xs">ME</div>
+    <div class="self-start mr-2 w-9 h-9 rounded-full bg-gray-200 flex items-center justify-center text-xs flex-shrink-0">ME</div>
     <div
       class="p-2 space-y-2 rounded-lg max-w-full bg-blue-50"
     >

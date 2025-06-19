@@ -64,7 +64,19 @@ export interface WebScraperResult {
     | null
     | undefined
     | {
-        // 错误信息
-        message: string; // 错误信息
-      };
+    // 错误信息
+    message: string; // 错误信息
+  };
+}
+
+export interface SearchWebResult {
+  error?: string | null | undefined; // 错误信息
+  results?: {
+    title: string;
+    url: string;
+    content: string;
+    rawContent?: string;
+    score: number;
+    publishedDate: string;
+  }[] | null;   // 搜索结果
 }
