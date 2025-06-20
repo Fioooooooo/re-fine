@@ -1,11 +1,11 @@
 import { tool as createTool } from 'ai';
 import { z } from 'zod';
-import type { SandboxReadFileResult } from '../types';
 import { getSandbox } from '~/utils/e2b_sandbox.server';
 import { ossPut } from '~/utils/oss.server';
 import { Sandbox } from '@e2b/code-interpreter';
 import fs from 'fs';
 import path from 'path';
+import type { SandboxReadFileParams, SandboxReadFileResult } from '../types';
 
 export default createTool({
   description:
@@ -25,7 +25,7 @@ export default createTool({
         '是否生成文件下载链接。设置为 true 时，将不返回文件内容，而是提供下载链接。当用户需要下载文件时，必须在你的回答中展示此链接，以便用户可以下载文件'
       ),
   }),
-  execute: async ({ sandboxId, filePath, download }): Promise<SandboxReadFileResult> => {
+  execute: async ({ sandboxId, filePath, download }: SandboxReadFileParams): Promise<SandboxReadFileResult> => {
     let sandbox : Sandbox | undefined;
     const fileName = filePath.split('/').pop() || 'unknown_file';
 
@@ -33,6 +33,14 @@ export default createTool({
       sandbox = await getSandbox(sandboxId);
 
       let fileContent = await sandbox.files.read(filePath);
+      let mimeType = '';
+      try {
+        const fileType = await sandbox.commands.run(`file --mime-type -b ${filePath}`);
+        mimeType = fileType.stdout;
+      } catch (error) {
+        console.error('获取文件类型时出错:', error);
+        mimeType = '';
+      }
 
       let downloadUrl = '';
       if (!download) {
@@ -40,6 +48,7 @@ export default createTool({
           sandboxId: sandbox?.sandboxId || '',
           filePath: filePath,
           content: fileContent,
+          mimeType: mimeType,
           downloadUrl,
         };
       }
@@ -67,6 +76,7 @@ export default createTool({
           sandboxId: sandbox?.sandboxId || '',
           filePath: filePath,
           content: fileContent,
+          mimeType,
           downloadUrl,
         };
       } catch (err: Error | any) {
@@ -75,6 +85,7 @@ export default createTool({
           sandboxId: sandbox?.sandboxId || '',
           filePath: filePath,
           content: fileContent,
+          mimeType,
           downloadUrl,
           error: '生成下载链接失败, ' + err.message,
         };
@@ -88,6 +99,7 @@ export default createTool({
         sandboxId: sandbox?.sandboxId || '',
         filePath: filePath,
         content: '',
+        mimeType: '',
         downloadUrl: '',
         error: error.message,
       };

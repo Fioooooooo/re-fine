@@ -5,7 +5,7 @@ import { chromium } from 'playwright';
 import { JSDOM } from 'jsdom';
 import { Readability } from '@mozilla/readability';
 import sanitizeHtml from 'sanitize-html';
-import type { WebScraperParams, WebScraperResult } from './types';
+import type { ScrapeWebParams, ScrapeWebResult } from './types';
 
 const getProxyConfig = () => {
   if (process.env.USE_PROXY && process.env.USE_PROXY === 'true') {
@@ -30,7 +30,7 @@ const cleanHtml = (html: string): string => {
   });
 };
 
-const buildLaunchOptions = (params: WebScraperParams): LaunchOptions => {
+const buildLaunchOptions = (params: ScrapeWebParams): LaunchOptions => {
   const options: LaunchOptions = {};
 
   const proxyConfig = getProxyConfig();
@@ -41,7 +41,7 @@ const buildLaunchOptions = (params: WebScraperParams): LaunchOptions => {
   return options;
 };
 
-const execute = async (params: WebScraperParams): Promise<WebScraperResult> => {
+const execute = async (params: ScrapeWebParams): Promise<ScrapeWebResult> => {
   const options = buildLaunchOptions(params);
   const browser = await chromium.launch(options);
 

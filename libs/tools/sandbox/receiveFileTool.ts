@@ -1,6 +1,6 @@
 import { tool as createTool } from 'ai';
 import { z } from 'zod';
-import type { SandboxReceiveFileResult } from '../types';
+import type { SandboxReceiveFileParams, SandboxReceiveFileResult } from '../types';
 import { Sandbox } from '@e2b/code-interpreter';
 import { getSandbox } from '~/utils/e2b_sandbox.server';
 
@@ -24,7 +24,7 @@ export default createTool({
       )
       .describe('要写入的文件列表，可同时写入多个文件，每个文件需指定路径和内容'),
   }),
-  execute: async ({ sandboxId, entries }): Promise<SandboxReceiveFileResult> => {
+  execute: async ({ sandboxId, entries }: SandboxReceiveFileParams): Promise<SandboxReceiveFileResult> => {
     let sandbox: Sandbox | undefined;
     try {
       sandbox = await getSandbox(sandboxId);

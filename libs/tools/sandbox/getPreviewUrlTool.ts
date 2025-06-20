@@ -1,6 +1,6 @@
 import { tool as createTool } from 'ai';
 import { z } from 'zod';
-import type { SandboxPreviewResult } from '../types';
+import type { SandboxPreviewParams, SandboxPreviewResult } from '../types';
 import { getSandbox } from '~/utils/e2b_sandbox.server';
 
 export default createTool({
@@ -11,7 +11,7 @@ export default createTool({
     port: z.string()
       .describe('应用监听的端口号，例如 "3000" 或 "8080"。必须与应用实际使用的端口一致'),
   }),
-  execute: async ({ sandboxId, port }): Promise<SandboxPreviewResult> => {
+  execute: async ({ sandboxId, port }: SandboxPreviewParams): Promise<SandboxPreviewResult> => {
     try {
       const sandbox = await getSandbox(sandboxId, false);
       const host = sandbox.getHost(Number.parseFloat(port));

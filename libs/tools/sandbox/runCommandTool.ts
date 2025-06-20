@@ -1,7 +1,7 @@
 import { tool as createTool } from 'ai';
 import { z } from 'zod';
 import { getSandbox } from '~/utils/e2b_sandbox.server';
-import type { SandboxRunCommandResult } from '../types';
+import type { SandboxRunCommandParams, SandboxRunCommandResult } from '../types';
 import type { Sandbox } from '@e2b/code-interpreter';
 
 export default createTool({
@@ -18,7 +18,7 @@ export default createTool({
       .default(false)
       .describe('是否在后台运行命令。设置为 true 时，命令将异步执行，不会阻塞后续操作，适用于启动服务器等长时间运行的进程'),
   }),
-  execute: async ({ sandboxId, command, background }): Promise<SandboxRunCommandResult> => {
+  execute: async ({ sandboxId, command, background }: SandboxRunCommandParams): Promise<SandboxRunCommandResult> => {
     let sandbox: Sandbox | undefined;
     try {
       const sandbox = await getSandbox(sandboxId);

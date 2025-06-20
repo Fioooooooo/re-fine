@@ -20,6 +20,7 @@ const { messages, status, append, reload, stop } = useChat({
     previewTool.toolCallId = toolCall.toolCallId;
     previewTool.args = toolCall.args;
     previewTool.state = 'call';
+    previewTool.result = undefined;
   },
   onFinish(message, options) {
     console.log('onFinish message', message);
@@ -55,13 +56,13 @@ const errorMessage = ref('');
 const canContinue = ref(false);
 const finishReason = ref('');
 
-const previewVisible = ref(true);
+const previewVisible = ref(false);
 const previewTool = reactive<{
   toolName: string,
   toolCallId: string,
   args: unknown,
   result: unknown,
-  state:  '' | 'call' | 'result' | 'partial-call' | undefined
+  state:  '' | 'call' | 'result' | 'partial-call'
 }>({
   toolName: '',
   toolCallId: '',

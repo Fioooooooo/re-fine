@@ -51,7 +51,6 @@ const props = defineProps<{
           <UIcon name="i-lucide-activity" class="size-4" />
           <span>工具调用</span>
           <span class="font-bold">{{ part?.toolInvocation?.toolName }}</span>
-          <span class="flex-1 overflow-hidden text-ellipsis line-clamp-1">{{ part?.toolInvocation?.args }}</span>
         </label>
       </div>
       <div v-if="part.type === 'tool-invocation'
