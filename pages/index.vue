@@ -1,18 +1,25 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, reactive, computed } from 'vue';
 import { useChat } from '@ai-sdk/vue';
 
 import { createUserMessage, mapFinishReason } from '~/utils/message_helper.client';
 import ChatHeader from '~/components/header/Header.vue';
 import ChatMessages from '~/components/chat/ChatMessages.vue';
 import ChatInput from '~/components/chat/ChatInput.vue';
-import CodePreview from '~/components/preview/CodePreview.vue';
+import PreviewPanel from '~/components/preview/PreviewPanel.vue';
 import type { UploadedFile } from '~/utils/file.client';
+import type { ToolInvocation, ToolInvocationUIPart } from '@ai-sdk/ui-utils';
+import type { ToolResult } from '@ai-sdk/provider-utils';
 
 const { messages, status, append, reload, stop } = useChat({
   maxSteps: 60,
   onToolCall({ toolCall }) {
     console.log('onToolCall', toolCall);
+    previewVisible.value = true;
+    previewTool.toolName = toolCall.toolName;
+    previewTool.toolCallId = toolCall.toolCallId;
+    previewTool.args = toolCall.args;
+    previewTool.state = 'call';
   },
   onFinish(message, options) {
     console.log('onFinish message', message);
@@ -20,6 +27,22 @@ const { messages, status, append, reload, stop } = useChat({
     const mapped = mapFinishReason(options.finishReason);
     canContinue.value = mapped.canContinue;
     finishReason.value = mapped.finishReason;
+
+    if (options.finishReason === 'tool-calls') {
+      const toolPart = message.parts
+        ?.filter(p => p.type === 'tool-invocation'
+          && p.toolInvocation.toolCallId === previewTool.toolCallId
+          && p.toolInvocation.state === 'result'
+        )[0] as ToolInvocationUIPart;
+      if (toolPart) {
+        const toolInvocation = toolPart.toolInvocation as ({
+          state: 'result';
+          step?: number;
+        } & ToolResult<string, any, any>)
+        previewTool.state = toolInvocation.state;
+        previewTool.result = toolInvocation.result;
+      }
+    }
   },
   onError(error) {
     console.log('onError', error);
@@ -28,10 +51,24 @@ const { messages, status, append, reload, stop } = useChat({
 });
 
 const isLoading = computed(() => ['submitted', 'streaming'].includes(status.value));
-const codePreviewVisible = ref(false);
 const errorMessage = ref('');
 const canContinue = ref(false);
 const finishReason = ref('');
+
+const previewVisible = ref(true);
+const previewTool = reactive<{
+  toolName: string,
+  toolCallId: string,
+  args: unknown,
+  result: unknown,
+  state:  '' | 'call' | 'result' | 'partial-call' | undefined
+}>({
+  toolName: '',
+  toolCallId: '',
+  args: undefined,
+  result: undefined,
+  state: ''
+});
 
 const onMessageSubmit = (userMessage: { text: string, files?: UploadedFile[] }) => {
   append(createUserMessage(userMessage));
@@ -41,6 +78,15 @@ const onRetry = () => {
   errorMessage.value = '';
   reload();
 };
+
+const onShowPreview = (toolInvocation: ToolInvocation) => {
+  previewVisible.value = true;
+  previewTool.toolName = toolInvocation.toolName;
+  previewTool.toolCallId = toolInvocation.toolCallId;
+  previewTool.args = toolInvocation.args;
+  previewTool.state = toolInvocation.state;
+  previewTool.result = toolInvocation.result;
+};
 </script>
 
 <template>
@@ -48,10 +94,15 @@ const onRetry = () => {
     <div class="grid w-full md:grid-cols-2">
       <div
         class="flex flex-col h-screen max-w-[800px] w-full mx-auto px-4"
-        :class="[codePreviewVisible ? 'col-span-1' : 'col-span-2']"
+        :class="[previewVisible ? 'col-span-1' : 'col-span-2']"
       >
         <ChatHeader />
-        <ChatMessages class="flex-1" :messages="messages" :is-loading="isLoading" />
+        <ChatMessages
+          class="flex-1"
+          :messages="messages"
+          :is-loading="isLoading"
+          @show-preview="onShowPreview"
+        />
         <ChatInput
           :is-loading="isLoading"
           :error-message="errorMessage"
@@ -70,10 +121,10 @@ const onRetry = () => {
         />
       </div>
       <div
-        v-if="codePreviewVisible"
-        class="absolute md:relative z-10 top-0 left-0 shadow-2xl md:rounded-tl-3xl md:rounded-bl-3xl md:border-l md:border-y h-full w-full overflow-auto bg-[#F5F5F5]"
+        v-if="previewVisible"
+        class="absolute md:relative z-10 top-0 left-0 shadow-2xl rounded-l-3xl border-l border-y h-full w-full overflow-auto bg-[#F5F5F5]"
       >
-        <CodePreview @close="codePreviewVisible = false" />
+        <PreviewPanel @close="previewVisible = false" :preview-tool="previewTool" />
       </div>
     </div>
   </div>

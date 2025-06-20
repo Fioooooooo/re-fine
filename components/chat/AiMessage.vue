@@ -2,7 +2,8 @@
 import type { UIMessage } from 'ai';
 import markdownit from 'markdown-it';
 import hljs from 'highlight.js';
-import { formatBytes } from '~/utils/file.client';
+
+const emits = defineEmits(['showPreview']);
 
 const md = markdownit({
   html: true,
@@ -41,6 +42,7 @@ const props = defineProps<{
       <div
         v-if="part.type === 'tool-invocation'"
         class="bg-gray-100 p-2 rounded text-sm font-mono"
+        @click="emits('showPreview', part.toolInvocation)"
       >
         <label
           :for="`tool-${part.toolInvocation.toolCallId}`"
@@ -74,23 +76,6 @@ const props = defineProps<{
             </div>
           </div>
         </a>
-      </div>
-      <div v-if="part.type === 'tool-invocation'
-        && part.toolInvocation.toolName === 'search_web'
-        && part.toolInvocation.state === 'result'
-        && part.toolInvocation.result?.results?.length > 0"
-           class="bg-gray-100 py-2 rounded text-sm"
-      >
-        <div
-          v-for="(result, idx) in part.toolInvocation.result.results"
-          :key="idx"
-          class="w-full overflow-hidden bg-gray-100 px-2 py-1 hover:bg-gray-200"
-        >
-          <a class="flex items-center" :href="result.url" target="_blank">
-            <UIcon name="i-lucide-link" class="size-4 mr-2" />
-            <span class="font-bold overflow-hidden text-ellipsis line-clamp-1">{{ result.title }}</span>
-          </a>
-        </div>
       </div>
     </div>
   </div>
