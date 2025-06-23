@@ -53,29 +53,6 @@ const props = defineProps<{
           <span class="font-bold">{{ part?.toolInvocation?.toolName }}</span>
         </label>
       </div>
-      <div v-if="part.type === 'tool-invocation'
-        && part.toolInvocation.toolName === 'sandbox_read_file'
-        && part.toolInvocation.state === 'result'
-        && part.toolInvocation.result?.downloadUrl"
-           class="text-sm grid grid-cols-3 gap-6 w-full"
-      >
-        <a class="block relative col-span-1 w-full overflow-hidden cursor-pointer border p-3 rounded-lg bg-elevated/50 hover:bg-elevated transition-colors duration-150"
-           :href="part.toolInvocation.result.downloadUrl"
-           target="_blank"
-        >
-          <div class="flex w-full overflow-hidden items-center">
-            <UIcon name="i-lucide-file-text" class="w-8 h-8 mr-2 rounded-lg object-cover" />
-            <div class="flex-1 min-w-0 overflow-hidden">
-              <div class="font-semibold text-sm overflow-hidden whitespace-nowrap text-ellipsis">
-                {{ part.toolInvocation.result.downloadUrl.split('/').pop() }}
-              </div>
-              <div class="text-xs text-gray-500 flex items-center w-full">
-                点击下载
-              </div>
-            </div>
-          </div>
-        </a>
-      </div>
     </div>
   </div>
 </template>

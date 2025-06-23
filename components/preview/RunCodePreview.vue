@@ -120,12 +120,19 @@ watch(
           <UIcon
             :name="
               resultStatus === 'pending'
-                ? 'i-lucide-loader animate-spin'
+                ? 'i-lucide-loader'
                 : resultStatus === 'error'
-                  ? 'i-lucide-alert-circle text-red-500'
-                  : 'i-lucide-check-circle text-green-500'
+                  ? 'i-lucide-alert-circle'
+                  : 'i-lucide-check-circle'
             "
             class="w-4 h-4 mr-2"
+            :class="[
+              resultStatus === 'pending'
+                ? 'animate-spin'
+                : resultStatus === 'error'
+                  ? 'text-red-500'
+                  : 'text-green-500',
+            ]"
           ></UIcon>
           执行结果
         </button>
