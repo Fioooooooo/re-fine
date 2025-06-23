@@ -1,9 +1,8 @@
 import { streamText, smoothStream, Attachment } from 'ai';
+import { createOpenRouter } from '@openrouter/ai-sdk-provider';
 import type { Message } from 'ai';
-import { createOpenAI } from '@ai-sdk/openai';
 import { chatTools } from '~/libs/tools';
 import { chatPrompt } from '~/libs/prompt';
-import { TextUIPart } from '@ai-sdk/ui-utils';
 
 // ai-sdk 的适配，移除无调用结果的 tool-call，否则会报错: 'ToolInvocation must have a result'
 const removeUnfinishedToolCalls = (messages: Message[]): Message[] => {
@@ -68,41 +67,40 @@ const rebuildMessages = (messages: Message[]): Message[] => {
   const newMessages = removeUnfinishedToolCalls(messages);
 
   // 从 attachment 中提取多模态无法处理的文件，同时只保留多模态允许的文件
-  for (let message of newMessages) {
-    const normalAttachments = extractNormalAttachment(message);
-    if (normalAttachments && normalAttachments.length > 0) {
-      message.content += `\n\n文件信息: ${JSON.stringify(normalAttachments)}`;
-      const textParts = message.parts
-        ?.filter(part => part.type === 'text')
-        .map(part => part as TextUIPart);
-      if (textParts && textParts.length > 0) {
-        textParts[textParts.length - 1].text += `\n\n文件信息: ${JSON.stringify(normalAttachments)}`;
-      }
-    }
-  }
+  // for (let message of newMessages) {
+  //   const normalAttachments = extractNormalAttachment(message);
+  //   if (normalAttachments && normalAttachments.length > 0) {
+  //     message.content += `\n\n文件信息: ${JSON.stringify(normalAttachments)}`;
+  //     const textParts = message.parts
+  //       ?.filter(part => part.type === 'text')
+  //       .map(part => part as TextUIPart);
+  //     if (textParts && textParts.length > 0) {
+  //       textParts[textParts.length - 1].text += `\n\n文件信息: ${JSON.stringify(normalAttachments)}`;
+  //     }
+  //   }
+  // }
 
   return newMessages;
 };
 
 export default defineLazyEventHandler(async () => {
-  const apiKey = process.env.QWEN_API_KEY;
+  const apiKey = process.env.OR_API_KEY;
   if (!apiKey) throw new Error('Missing API key!');
 
-  const openai = createOpenAI({
+  const openRouter = createOpenRouter({
     apiKey: apiKey,
-    baseURL: 'https://dashscope.aliyuncs.com/compatible-mode/v1',
   });
 
   return defineEventHandler(async (event: any) => {
     const { messages: originalMessages } = await readBody(event);
 
     const messages = rebuildMessages(originalMessages);
-    const modelId = useMultiModal(messages[messages.length - 1]) ? 'qwen-omni-turbo' : 'qwen-max';
+    // const modelId = useMultiModal(messages[messages.length - 1]) ? 'qwen-omni-turbo' : 'qwen-max';
 
-    console.log('messages', JSON.stringify(messages), modelId);
+    console.log('messages', JSON.stringify(messages));
 
     const result = streamText({
-      model: openai(modelId),
+      model: openRouter("anthropic/claude-sonnet-4"),
       messages: messages,
       tools: chatTools,
       system: chatPrompt,
