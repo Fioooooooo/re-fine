@@ -128,6 +128,7 @@ watch(
           name="i-lucide-file-plus"
           class="w-10 h-10 text-teal-500 mr-4 p-1 bg-teal-50 rounded-lg"
           aria-hidden="true"
+          mode="svg"
         ></UIcon>
         <div class="flex-1 min-w-0">
           <div class="text-lg font-medium text-gray-800">文件写入操作</div>

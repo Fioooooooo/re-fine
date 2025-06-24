@@ -42,7 +42,7 @@ watch(
       isLoading.value = false;
     }
   },
-  { immediate: true },
+  { immediate: true }
 );
 </script>
 
@@ -57,6 +57,7 @@ watch(
           name="i-lucide-globe"
           class="w-10 h-10 text-purple-500 mr-4 p-1 bg-purple-50 rounded-lg"
           aria-hidden="true"
+          mode="svg"
         ></UIcon>
         <div class="flex-1 min-w-0">
           <div class="text-lg font-medium text-gray-800">沙箱桌面环境</div>
@@ -111,14 +112,13 @@ watch(
             <div class="font-medium text-gray-700">桌面预览</div>
           </div>
 
-          <div v-if="showFullscreen" class="flex items-center">
-            <button
-              @click="toggleFullscreen"
-              class="text-gray-500 hover:text-gray-700 transition-colors"
-            >
-              <UIcon name="i-lucide-x" class="w-5 h-5"></UIcon>
-            </button>
-          </div>
+          <UButton
+            :icon="showFullscreen ? 'i-lucide-minimize-2' : 'i-lucide-maximize-2'"
+            color="secondary"
+            @click="toggleFullscreen"
+          >
+            {{ showFullscreen ? '退出全屏' : '全屏预览' }}
+          </UButton>
         </div>
 
         <!-- 加载中提示 -->
@@ -150,12 +150,13 @@ watch(
 
 <style scoped>
 .preview-url-container {
-  font-family: system-ui,
-  -apple-system,
-  BlinkMacSystemFont,
-  'Segoe UI',
-  Roboto,
-  sans-serif;
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
 }
 
 /* 加载动画 */

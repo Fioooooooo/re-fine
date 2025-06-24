@@ -62,7 +62,7 @@ function toggleFullContent() {
     >
       <div class="website-header bg-gray-50 p-4 flex items-center">
         <div class="website-icon mr-3 bg-gray-100 rounded-lg p-2">
-          <UIcon name="i-lucide-globe" class="w-6 h-6 text-gray-600"></UIcon>
+          <UIcon name="i-lucide-globe" class="w-6 h-6 text-gray-600" mode="svg"></UIcon>
         </div>
         <div class="flex-1 overflow-hidden">
           <div class="text-lg font-medium text-gray-800 truncate">{{ args.url }}</div>

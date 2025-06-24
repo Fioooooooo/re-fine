@@ -112,6 +112,7 @@ watch(
           name="i-lucide-file-down"
           class="w-10 h-10 text-indigo-500 mr-4 p-1 bg-indigo-50 rounded-lg"
           aria-hidden="true"
+          mode="svg"
         ></UIcon>
         <div class="flex-1 min-w-0">
           <div class="text-lg font-medium text-gray-800">文件接收操作</div>

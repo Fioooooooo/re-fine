@@ -6,10 +6,10 @@ import { chatPrompt } from '~/libs/prompt';
 
 // ai-sdk 的适配，移除无调用结果的 tool-call，否则会报错: 'ToolInvocation must have a result'
 const removeUnfinishedToolCalls = (messages: Message[]): Message[] => {
-  return messages.map((message) => ({
+  return messages.map(message => ({
     ...message,
     parts: message.parts?.filter(
-      (part) => part.type !== 'tool-invocation' || part.toolInvocation.state === 'result',
+      part => part.type !== 'tool-invocation' || part.toolInvocation.state === 'result'
     ),
   }));
 };
@@ -39,9 +39,11 @@ const extractNormalAttachment = (message: Message): Attachment[] => {
 
   // 多模态只允许 image、video、audio
   const isMultiModalAllowedFile = (file: Attachment) => {
-    return file.contentType?.startsWith('image')
-      || file.contentType?.startsWith('video')
-      || file.contentType?.startsWith('audio');
+    return (
+      file.contentType?.startsWith('image') ||
+      file.contentType?.startsWith('video') ||
+      file.contentType?.startsWith('audio')
+    );
   };
 
   const normalAttachments: Attachment[] = [];
@@ -100,7 +102,7 @@ export default defineLazyEventHandler(async () => {
     console.log('messages', JSON.stringify(messages));
 
     const result = streamText({
-      model: openRouter("anthropic/claude-sonnet-4"),
+      model: openRouter('anthropic/claude-sonnet-4'),
       messages: messages,
       tools: chatTools,
       system: chatPrompt,

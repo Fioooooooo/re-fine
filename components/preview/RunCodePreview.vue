@@ -73,6 +73,7 @@ watch(
         <UIcon
           name="i-lucide-code-2"
           class="w-10 h-10 text-indigo-500 mr-4 p-1 bg-indigo-50 rounded-lg"
+          mode="svg"
         />
         <div class="flex-1 min-w-0">
           <div class="text-lg font-medium text-gray-800">代码执行环境</div>

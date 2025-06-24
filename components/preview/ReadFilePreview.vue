@@ -349,6 +349,7 @@ watch(
           :name="fileIcon"
           class="w-10 h-10 text-blue-500 mr-4 p-1 bg-blue-50 rounded-lg"
           aria-hidden="true"
+          mode="svg"
         />
         <div class="flex-1 min-w-0">
           <div class="text-lg font-medium text-gray-800 truncate">{{ fileName }}</div>

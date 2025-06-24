@@ -57,6 +57,7 @@ watch(
           name="i-lucide-globe"
           class="w-10 h-10 text-purple-500 mr-4 p-1 bg-purple-50 rounded-lg"
           aria-hidden="true"
+          mode="svg"
         ></UIcon>
         <div class="flex-1 min-w-0">
           <div class="text-lg font-medium text-gray-800">沙箱应用预览</div>

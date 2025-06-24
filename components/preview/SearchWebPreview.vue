@@ -27,7 +27,7 @@ watch(
       class="search-box bg-white rounded-full shadow-md border border-gray-200 flex items-center px-4 py-3 mb-6"
     >
       <div class="search-icon mr-3 flex items-center">
-        <UIcon name="i-lucide-search" class="text-gray-400 w-5 h-5"></UIcon>
+        <UIcon name="i-lucide-search" class="text-gray-400 w-5 h-5" mode="svg"></UIcon>
       </div>
       <div class="flex-1 font-medium text-gray-800">{{ args.query }}</div>
       <div v-if="args.domains && args.domains.length > 0" class="domain-pills flex gap-2">

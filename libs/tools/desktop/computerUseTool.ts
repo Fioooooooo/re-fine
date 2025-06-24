@@ -1,42 +1,43 @@
 import type { CoreMessage } from 'ai';
 import { generateText, streamText, tool as createTool, generateId } from 'ai';
 import { z } from 'zod';
-import { anthropic } from '@ai-sdk/anthropic';
-import { openai } from '@ai-sdk/openai';
+import { anthropic, createAnthropic } from '@ai-sdk/anthropic';
 import { Sandbox } from '@e2b/desktop';
-import { executeComputerAction, takeScreenshot } from './computer-use';
+import { ComputerOperator } from './computer-operator';
+import { ResolutionScaler } from './resolution';
 import type { ComputerUseParams, ComputerUseResult } from '../types';
-import { createOpenRouter } from '@openrouter/ai-sdk-provider';
 
+let computerOperator: ComputerOperator | undefined;
 let desktop: Sandbox | undefined;
-const DESKTOP_TIMEOUT = 60_000;
-const RESOLUTION = [1024, 768];
+const DESKTOP_TIMEOUT = 10 * 60_000;
+const DESKTOP_RESOLUTION: [number, number] = [1024, 768];
 
-const computerTool = anthropic.tools.computer_20241022({
-  displayWidthPx: RESOLUTION[0],
-  displayHeightPx: RESOLUTION[1],
-  execute: async (options) => {
+const computerTool = anthropic.tools.computer_20250124({
+  displayWidthPx: DESKTOP_RESOLUTION[0],
+  displayHeightPx: DESKTOP_RESOLUTION[1],
+  execute: async options => {
     console.log('options', options);
     switch (options.action) {
       case 'screenshot':
-        return await takeScreenshot(desktop as Sandbox);
+        return computerOperator?.takeScreenshot();
       default:
-        await executeComputerAction(desktop as Sandbox, options);
-        return await takeScreenshot(desktop as Sandbox);
+        await computerOperator?.executeAction(options);
+        return computerOperator?.takeScreenshot();
     }
   },
   experimental_toToolResultContent(result) {
-    return [{
-      type: 'image',
-      data: Buffer.from(result).toString('base64'),
-      mimeType: 'image/png',
-    }];
+    return [
+      {
+        type: 'image',
+        data: Buffer.from(result as Buffer).toString('base64'),
+        mimeType: 'image/png',
+      },
+    ];
   },
 });
 
-const bashTool = anthropic.tools.bash_20241022({
+const bashTool = anthropic.tools.bash_20250124({
   execute: async ({ command, restart }) => {
-    console.log('command', command);
     try {
       const result = await desktop?.commands.run(command);
       await desktop?.setTimeout(DESKTOP_TIMEOUT);
@@ -83,7 +84,13 @@ const execute = async ({ sandboxId, task }: ComputerUseParams): Promise<Computer
 
   desktop = !!sandboxId
     ? await Sandbox.connect(sandboxId)
-    : await Sandbox.create({ resolution: [RESOLUTION[0], RESOLUTION[1]], dpi: 96, timeoutMs: DESKTOP_TIMEOUT });
+    : await Sandbox.create({
+        resolution: DESKTOP_RESOLUTION,
+        dpi: 96,
+        timeoutMs: DESKTOP_TIMEOUT,
+      });
+
+  computerOperator = new ComputerOperator(desktop, new ResolutionScaler(desktop, DESKTOP_RESOLUTION));
 
   try {
     await desktop.stream.start();
@@ -95,13 +102,13 @@ const execute = async ({ sandboxId, task }: ComputerUseParams): Promise<Computer
 
   const messages: CoreMessage[] = [{ role: 'user', content: task }];
 
-  const openRouter = createOpenRouter({
-    apiKey: process.env.OR_API_KEY,
-  });
+  const anthropic = createAnthropic({
+    apiKey: process.env.OAI_API_KEY,
+    baseURL: 'https://api.oaipro.com/v1',
+  })
 
-  // setTimeout(async () => {
-  const result = await generateText({
-    model: openRouter.chat('anthropic/claude-3.5-sonnet'),
+  generateText({
+    model: anthropic('claude-sonnet-4-20250514'),
     system: INSTRUCTIONS,
     messages,
     maxSteps: 60,
@@ -110,11 +117,6 @@ const execute = async ({ sandboxId, task }: ComputerUseParams): Promise<Computer
       bash: bashTool,
     },
   });
-console.log('result', result);
-  for (const toolCall of result.toolCalls) {
-    console.log('toolCall: ', toolCall);
-  }
-  // }, 100)
 
   return {
     sandboxId: desktop.sandboxId,
@@ -123,14 +125,15 @@ console.log('result', result);
 };
 
 export default createTool({
-  description: '控制具有桌面环境的沙箱电脑来完成复杂任务。包括执行命令行指令、控制应用、操作鼠标、键盘、屏幕截图等。',
+  description:
+    '控制具有桌面环境的沙箱电脑来完成复杂任务。包括执行命令行指令、控制应用、操作鼠标、键盘、屏幕截图等。任务将会异步执行，你只会收到 vnc 链接，不会收到最终的任务结果，只需要告诉用户等待任务完成即可。',
   parameters: z.object({
-    sandboxId: z.string()
+    sandboxId: z
+      .string()
       .optional()
       .nullable()
       .describe('可选参数。如果要使用现有沙箱环境，请提供沙箱 ID。若不提供，将创建新的沙箱环境'),
-    task: z.string()
-      .describe('要在沙箱电脑中执行的任务描述，'),
+    task: z.string().describe('要在沙箱电脑中执行的任务描述，'),
   }),
   execute: execute,
 });
