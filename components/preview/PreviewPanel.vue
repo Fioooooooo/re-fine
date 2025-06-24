@@ -7,6 +7,7 @@ import ReadFilePreview from './ReadFilePreview.vue';
 import WriteFilePreview from './WriteFilePreview.vue';
 import ReceiveFilePreview from './ReceiveFilePreview.vue';
 import GetPreviewUrlPreview from './GetPreviewUrlPreview.vue';
+import ComputerUsePreview from './ComputerUsePreview.vue';
 import type { SearchWebParams, SearchWebResult } from '~/libs/tools/types';
 import type { ScrapeWebParams, ScrapeWebResult } from '~/libs/tools/types';
 import type { SandboxRunCodeParams, SandboxRunCodeResult } from '~/libs/tools/types';
@@ -15,6 +16,7 @@ import type { SandboxReadFileParams, SandboxReadFileResult } from '~/libs/tools/
 import type { SandboxWriteFileParams, SandboxWriteFileResult } from '~/libs/tools/types';
 import type { SandboxReceiveFileParams, SandboxReceiveFileResult } from '~/libs/tools/types';
 import type { SandboxPreviewParams, SandboxPreviewResult } from '~/libs/tools/types';
+import type { ComputerUseParams, ComputerUseResult } from '~/libs/tools/types';
 
 const emits = defineEmits(['close']);
 const props = defineProps<{
@@ -100,6 +102,10 @@ type ToolDefinitions = {
     args: SandboxPreviewParams;
     result: SandboxPreviewResult;
   };
+  computer_use: {
+    args: ComputerUseParams;
+    result: ComputerUseResult;
+  }
 };
 
 // 类型保护函数，用于安全地获取工具参数
@@ -206,6 +212,12 @@ function getToolResult<T extends keyof ToolDefinitions>(
         v-else-if="previewTool?.toolName === 'sandbox_get_preview_url'"
         :args="getToolArgs('sandbox_get_preview_url')"
         :result="getToolResult('sandbox_get_preview_url')"
+      />
+
+      <ComputerUsePreview
+        v-else-if="previewTool?.toolName === 'computer_use'"
+        :args="getToolArgs('computer_use')"
+        :result="getToolResult('computer_use')"
       />
 
       <!-- 未知工具类型的默认显示 -->

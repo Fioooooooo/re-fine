@@ -124,3 +124,14 @@ export interface SearchWebResult {
     publishedDate: string;
   }[] | null;   // 搜索结果
 }
+
+export interface ComputerUseParams {
+  sandboxId?: string | null; // 沙箱 ID
+  task: string; // 任务描述
+}
+
+export interface ComputerUseResult {
+  sandboxId: string; // 沙箱 ID
+  vncUrl: string; // VNC URL
+  error?: string | null; // 错误信息
+}

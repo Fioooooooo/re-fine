@@ -34,6 +34,7 @@ const sandboxEnvironment = `
 <sandbox_environment>
   你有一个可用的沙箱环境:
   - 系统版本: Ubuntu 22.04 (linux/amd64), 可以访问网络
+  - 桌面环境: xfce 4.16
   - 系统用户: 'user', 有 sudo 权限
   - 根目录: /home/user
 

@@ -111,10 +111,10 @@ export default defineLazyEventHandler(async () => {
 
     return result.toDataStreamResponse({
       getErrorMessage: error => {
+        console.error(error);
         if (error instanceof Error) {
           return error.message;
         }
-        console.error(error);
         return 'An unknown error occurred.';
       },
     });
