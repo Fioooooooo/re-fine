@@ -8,6 +8,7 @@ import WriteFilePreview from './WriteFilePreview.vue';
 import ReceiveFilePreview from './ReceiveFilePreview.vue';
 import GetPreviewUrlPreview from './GetPreviewUrlPreview.vue';
 import ComputerUsePreview from './ComputerUsePreview.vue';
+import BrowserUsePreview from './BrowserUsePreview.vue';
 import type { SearchWebParams, SearchWebResult } from '~/libs/tools/types';
 import type { ScrapeWebParams, ScrapeWebResult } from '~/libs/tools/types';
 import type { SandboxRunCodeParams, SandboxRunCodeResult } from '~/libs/tools/types';
@@ -105,6 +106,10 @@ type ToolDefinitions = {
   computer_use: {
     args: ComputerUseParams;
     result: ComputerUseResult;
+  },
+  browser_use: {
+    args: any,
+    result: any
   }
 };
 
@@ -214,10 +219,18 @@ function getToolResult<T extends keyof ToolDefinitions>(
         :result="getToolResult('sandbox_get_preview_url')"
       />
 
+      <!-- computer-use -->
       <ComputerUsePreview
         v-else-if="previewTool?.toolName === 'computer_use'"
         :args="getToolArgs('computer_use')"
         :result="getToolResult('computer_use')"
+      />
+
+      <!-- computer-use -->
+      <BrowserUsePreview
+        v-else-if="previewTool?.toolName === 'browser_use'"
+        :args="getToolArgs('browser_use')"
+        :result="getToolResult('browser_use')"
       />
 
       <!-- 未知工具类型的默认显示 -->

@@ -1,11 +1,11 @@
 import type { CoreMessage } from 'ai';
-import { generateText, streamText, tool as createTool, generateId } from 'ai';
+import { generateText, tool as createTool } from 'ai';
 import { z } from 'zod';
 import { anthropic, createAnthropic } from '@ai-sdk/anthropic';
 import { Sandbox } from '@e2b/desktop';
 import { ComputerOperator } from './computer-operator';
 import { ResolutionScaler } from './resolution';
-import type { ComputerUseParams, ComputerUseResult } from '../types';
+import type { ComputerUseParams, ComputerUseResult } from '../../types';
 
 let computerOperator: ComputerOperator | undefined;
 let desktop: Sandbox | undefined;
