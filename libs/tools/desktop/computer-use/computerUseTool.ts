@@ -111,7 +111,7 @@ const execute = async ({ sandboxId, task }: ComputerUseParams): Promise<Computer
     model: anthropic('claude-sonnet-4-20250514'),
     system: INSTRUCTIONS,
     messages,
-    maxSteps: 60,
+    maxSteps: 100,
     tools: {
       computer: computerTool,
       bash: bashTool,
